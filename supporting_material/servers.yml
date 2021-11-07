@@ -54,10 +54,9 @@ Resources:
           sudo apt-get update -y
           sudo apt-get install apache2 -y
           sudo systemctl start apache2.service          
-      # ToDo: AMI ID of Ubuntu Linux machine. Too get one, try creating a VM from the web console. 
-      ImageId: ami-0747bdcabd34c712a
-      # ToDo: Change the key-pair name, as applicable to you. 
-      KeyName: nd9990_keypair
+      # Ubuntu Server 18.04 LTS (HVM),EBS General Purpose (SSD) Volume Type. 
+      ImageId: ami-0279c3b3186e54acd 
+      KeyName: EC2ServerKeyPair
       SecurityGroups:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
