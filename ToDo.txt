@@ -1,8 +1,2 @@
-EC2 configuration
-- instance type  t3.medium (free tier for testing: t2.micro)
-- AMI:
--- free tier eligible: ami-0279c3b3186e54acd (64-bit x86) / ami-0528007a60177dd84 (64-bit Arm)
-
 EC2 Servers 
-- create one more EC2
 - verify configuration 
