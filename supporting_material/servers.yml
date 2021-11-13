@@ -6,6 +6,11 @@ Parameters:
     EnvironmentName:
         Description: An environment name that will be prefixed to resource names
         Type: String
+
+    # possible additional parameters
+    # EC2ServerKeyPair
+    # EC2 Image Id
+
 Resources:
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
@@ -60,6 +65,8 @@ Resources:
       SecurityGroups:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
+      # reference to instance profile
+      #IamInstanceProfile: Ref! ServerInstanceProfile
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
@@ -120,3 +127,53 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
+  # # Instance Profile below
+  # ServerInstanceProfile:
+  #   Type: AWS::IAM::InstanceProfile
+  #   Properties: 
+  #     InstanceProfileName: server-ec2-instance-profile
+  #     Roles: 
+  #       - !Ref ServerEC2InstanceS3ReadOnlyRole
+  # # Instance Role below
+  # ServerEC2InstanceS3ReadOnlyRole:
+  #   Type: AWS::IAM::Role
+  #   Properties: 
+  #     AssumeRolePolicyDocument: 
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ec2.amazonaws.com
+  #           Action:
+  #             - 'sts:AssumeRole'
+  #     RoleName: server-ec2-instance-role
+  # # Instance S3 Policy
+  # ServerEC2InstanceS3ReadOnlyPolicy:
+  #   Type: AWS::IAM::Policy
+  #   Properties:
+  #     PolicyName: ServerS3Policy
+  #     PolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         -
+  #           Effect: Allow
+  #           Action:
+  #             - s3:Get*
+  #             - s3:List*
+  #             - s3-object-lambda:Get*
+  #             - s3-object-lambda:List*
+  #           Resource:
+  #             - arn:aws:s3:::*
+  #     Roles:
+  #       - !Ref ServerEC2InstanceS3ReadOnlyRole
+
+Outputs:
+
+    WebAppLBDNSName:
+        Description: DNS Name of Web App Load Balancer
+        Value: !Sub
+          - http://${DNSName}
+          - {DNSName: !GetAtt WebAppLB.DNSName}
+        Export:
+          Name: !Sub ${EnvironmentName}-WebAppLBDNSName
