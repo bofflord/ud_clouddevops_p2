@@ -38,8 +38,8 @@ Resources:
           !Sub "${EnvironmentName}-VPCID"
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 8080
-        ToPort: 8080
+        FromPort: 80
+        ToPort: 80
         CidrIp: 0.0.0.0/0
       - IpProtocol: tcp
         FromPort: 22
@@ -66,7 +66,7 @@ Resources:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
       # reference to instance profile
-      #IamInstanceProfile: Ref! ServerInstanceProfile
+      IamInstanceProfile: Ref! ServerInstanceProfile
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
@@ -121,52 +121,52 @@ Resources:
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 8
       HealthyThresholdCount: 2
-      Port: 8080
+      Port: 80
       Protocol: HTTP
       UnhealthyThresholdCount: 5
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
-  # # Instance Profile below
-  # ServerInstanceProfile:
-  #   Type: AWS::IAM::InstanceProfile
-  #   Properties: 
-  #     InstanceProfileName: server-ec2-instance-profile
-  #     Roles: 
-  #       - !Ref ServerEC2InstanceS3ReadOnlyRole
-  # # Instance Role below
-  # ServerEC2InstanceS3ReadOnlyRole:
-  #   Type: AWS::IAM::Role
-  #   Properties: 
-  #     AssumeRolePolicyDocument: 
-  #       Version: "2012-10-17"
-  #       Statement:
-  #         - Effect: Allow
-  #           Principal:
-  #             Service:
-  #               - ec2.amazonaws.com
-  #           Action:
-  #             - 'sts:AssumeRole'
-  #     RoleName: server-ec2-instance-role
-  # # Instance S3 Policy
-  # ServerEC2InstanceS3ReadOnlyPolicy:
-  #   Type: AWS::IAM::Policy
-  #   Properties:
-  #     PolicyName: ServerS3Policy
-  #     PolicyDocument:
-  #       Version: 2012-10-17
-  #       Statement:
-  #         -
-  #           Effect: Allow
-  #           Action:
-  #             - s3:Get*
-  #             - s3:List*
-  #             - s3-object-lambda:Get*
-  #             - s3-object-lambda:List*
-  #           Resource:
-  #             - arn:aws:s3:::*
-  #     Roles:
-  #       - !Ref ServerEC2InstanceS3ReadOnlyRole
+  # Instance Profile below
+  ServerInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: server-ec2-instance-profile
+      Roles: 
+        - !Ref ServerEC2InstanceS3ReadOnlyRole
+  # Instance Role below
+  ServerEC2InstanceS3ReadOnlyRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      RoleName: server-ec2-instance-role
+  # Instance S3 Policy
+  ServerEC2InstanceS3ReadOnlyPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: ServerS3Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Action:
+              - s3:Get*
+              - s3:List*
+              - s3-object-lambda:Get*
+              - s3-object-lambda:List*
+            Resource:
+              - arn:aws:s3:::*
+      Roles:
+        - !Ref ServerEC2InstanceS3ReadOnlyRole
 
 Outputs:
 
