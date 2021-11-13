@@ -1,0 +1,57 @@
+Description:
+    Creates resources to attach an IAM to an EC2 instance
+
+Parameters:
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+
+Resources:
+  # Instance Profile below
+  ServerInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: server-ec2-instance-profile
+      Roles: 
+        - !Ref ServerEC2InstanceS3ReadOnlyRole
+  # Instance Role below
+  ServerEC2InstanceS3ReadOnlyRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      RoleName: server-ec2-instance-role
+  # Instance S3 Policy
+  ServerEC2InstanceS3ReadOnlyPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: ServerS3Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Action:
+              - s3:Get*
+              - s3:List*
+              - s3-object-lambda:Get*
+              - s3-object-lambda:List*
+            Resource:
+              - "*"
+      Roles:
+        - !Ref ServerEC2InstanceS3ReadOnlyRole
+
+Outputs:
+
+    ServerInstanceProfile:
+        Description: ServerInstanceProfile for Autoscaling LaunchConfiguration
+        Value: !Ref ServerInstanceProfile
+        Export:
+          Name: !Sub ${EnvironmentName}-ServerInstanceProfile
