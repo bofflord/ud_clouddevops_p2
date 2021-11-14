@@ -5,12 +5,11 @@ The deployment is done from a local computer via the AWS Command Line Interface 
 The content within the scripts folder is partially based on the supporting material and starter code from the repository [nd9991-c2-Infrastructure-as-Code-v1](https://github.com/udacity/nd9991-c2-Infrastructure-as-Code-v1).
 
 ### Overview on CloudFormation Stacks
-The infrastructure is divided into three CloudFormation stacks:
+The infrastructure is divided into two CloudFormation stacks:
 1. Network (Network.yml): creates all network infrastructure for the web applications.
-2. IAM role (iamrole.yml): creates IAM role and dependencies for web application servers.
-3. Servers (servers.yml): creates the web application servers.
+2. Servers (servers.yml): creates the web application servers.
 
-Please note that the infrastructure for network and IAM role need to be created prior to the servers. The servers require the output from both network and IAM role stacks.
+Please note that the infrastructure for the network needs to be created prior to the servers. The servers require the output from the network stacks.
 A detailed overview of scripts, templates and parameters is found below in section [Project Content](#project-content)
 
 ### Dependencies
@@ -70,9 +69,7 @@ Diagram of the AWS web architecture
     - delete&#46;sh: deletes CloudFormation stack.
 - CloudFormation templates for infrastructure
     - network&#46;yml: VPC, Internetgateway, public/ private subnets, NAT gateways, route tables.
-    - iamrole&#46;yml: server IAM instance profile, role and policy.
-    - servers&#46;yml: security groups, load balancer, launch configuration, auto-scaling group for EC2 application servers.
+    - servers&#46;yml: security groups, load balancer, launch configuration, auto-scaling group for EC2 application servers, server IAM instance profile, role and policy.
 - Cloudformation parameter files
     - network-parameters&#46;json: environment name, CIDRs for VPC and public/ private subnets.
-    - iamrole-parameters&#46;json: environment name
     - server-parameters&#46;json: environment name, autoscaling ec2 image-id, autoscaling key name.
