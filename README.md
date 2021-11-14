@@ -1,49 +1,78 @@
-## ND9991 - C2- Infrastructure as Code - Supporting Material and Starter Code
-This folder provides the supporting material and starter code for the "ND9991 - C2- Infrastructure as Code" course. This folder contains the following folders:
-1. project_starter - It contains the starter code.
-2. supporting_material - It contains the essential files (.yml, .json, .bat, .sh, and .jpeg) that were referred in the different lessons of this course.
+## ND9991 - Project2: Deploy a high-availability web app using CloudFormation
+The project scenario is to deploy a new web application to the AWS infrastructure.
+The deployment is done from a local computer via the AWS Command Line Interface (CLI). The AWS CloudFormation service is used for the creation and configuration of all infrastructure.
 
+The content within the scripts folder is partially based on the supporting material and starter code from the repository [nd9991-c2-Infrastructure-as-Code-v1](https://github.com/udacity/nd9991-c2-Infrastructure-as-Code-v1).
 
-In addition to the current repo, there is one more repository, [nd9991-c2-Infrastructure-as-Code-v1-Exercises_Solution](https://github.com/udacity/nd9991-c2-Infrastructure-as-Code-v1-Exercises_Solution) that contains the solution to the exercises and video demos.  
+### Overview on CloudFormation Stacks
+The infrastructure is divided into three CloudFormation stacks:
+1. Network (Network.yml): creates all network infrastructure for the web applications.
+2. IAM role (iamrole.yml): creates IAM role and dependencies for web application servers.
+3. Servers (servers.yml): creates the web application servers.
 
-__ToDo: update content above__
+Please note that the infrastructure for network and IAM role need to be created prior to the servers. The servers require the output from both network and IAM role stacks.
+A detailed overview of scripts, templates and parameters is found below in section [Project Content](#project-content)
 
 ### Dependencies
 ##### 1. AWS account
 You would require to have an AWS account to be able to build cloud infrastructure.
 
-##### 2. VS code editor
+##### 2. System setup
+The shell scripts have been written for a Linux operation system. Additionally is necessary to have the AWS CLI installed.
+
+##### 3. VS code editor
 An editor would be helpful to visualize the image as well as code. Download the VS Code editor [here](https://code.visualstudio.com/download).
 
-##### 3. An account on www.lucidchart.com
+##### 4. An account on www.lucidchart.com for the adaptation of the diagram
 A free user-account on [www.lucidchart.com](www.lucidchart.com) is required to be able to draw the web app architecture diagrams for AWS.
 
 ### Configuration
 #### Configure profile "udacity" in AWS CLI
 ```bash
 # configure profile
-aws configure --profile udacity
+aws configure --profile AWS_PROFILE_NAME
 # set aws session token (if required)
-aws configure --profile udacity set aws_session_token YOUR-TOKEN
+aws configure --profile AWS_PROFILE_NAME set aws_session_token YOUR-TOKEN
 ```
 
 #### Create EC2 key value pair (not stored in code repository)
 ```bash
 # create EC2 key pair
-aws ec2 create-key-pair --key-name EC2ServerKeyPair --query 'KeyMaterial' --output text > EC2ServerKeyPair.pem --profile udacity
+aws ec2 create-key-pair --key-name EC2ServerKeyPair --query 'KeyMaterial' --output text > EC2ServerKeyPair.pem --profile AWS_PROFILE_NAME
 ```
 
 ### How to run the scripts?
 You can run the supporting material in two easy steps:
 ```bash
-# Ensure that the AWS CLI is configured before runniing the command below
+# Ensure that the AWS CLI is configured before running the command below
+# AWS_PROFILE_NAME refers to a user profile for the destined AWS account
 # Create the network infrastructure
 # Check the region in the create.sh file
-./create.sh myFirstStack network.yml network-parameters.json
+./create.sh myFirstStack network.yml network-parameters.json AWS_PROFILE_NAME
 # Create servers
-# Change the AMI ID and key-pair name in the servers.yml
+# Change the AMI ID and key-pair name in file server-parameters.json
 # Check the region in the update.sh file
-./update.sh mySecStack servers.yml server-parameters.json
+./update.sh mySecStack servers.yml server-parameters.json AWS_PROFILE_NAME
 # Delete stack
-./delete.sh myFirstStack
+./delete.sh myFirstStack AWS_PROFILE_NAME
 ```
+
+<a name="project-content"></a>
+### Project Content
+
+#### Folder diagram
+Diagram of the AWS web architecture
+
+#### Folder scripts
+- Shell scripts:
+    - create&#46;sh: creates CloudFormation stack.
+    - update&#46;sh: updates CloudFormation stack.
+    - delete&#46;sh: deletes CloudFormation stack.
+- CloudFormation templates for infrastructure
+    - network&#46;yml: VPC, Internetgateway, public/ private subnets, NAT gateways, route tables.
+    - iamrole&#46;yml: server IAM instance profile, role and policy.
+    - servers&#46;yml: security groups, load balancer, launch configuration, auto-scaling group for EC2 application servers.
+- Cloudformation parameter files
+    - network-parameters&#46;json: environment name, CIDRs for VPC and public/ private subnets.
+    - iamrole-parameters&#46;json: environment name
+    - server-parameters&#46;json: environment name, autoscaling ec2 image-id, autoscaling key name.

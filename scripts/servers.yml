@@ -7,9 +7,15 @@ Parameters:
         Description: An environment name that will be prefixed to resource names
         Type: String
 
-    # possible additional parameters
-    # EC2ServerKeyPair
-    # EC2 Image Id
+    AutoscalingEC2ImageId:
+        Description: Imageid to be used for EC2s in autoscaling group
+        Type: String
+        # Ubuntu Server 18.04 LTS (HVM),EBS General Purpose (SSD) Volume Type.
+        Default: ami-0279c3b3186e54acd
+
+    AutoscalingKeyName:
+        Description: KeyName to be used for accessing EC2s in autoscaling group
+        Type: String
 
 Resources:
   LBSecGroup:
@@ -58,11 +64,11 @@ Resources:
           #!/bin/bash
           sudo apt-get update -y
           sudo apt-get install apache2 -y
-          sudo systemctl start apache2.service          
-      # Ubuntu Server 18.04 LTS (HVM),EBS General Purpose (SSD) Volume Type. 
-      ImageId: ami-0279c3b3186e54acd 
-      # EC2ServerKeyPair to be specified as parameter
-      KeyName: EC2ServerKeyPair
+          sudo systemctl start apache2.service
+          cd /var/www/html  
+          echo "Udacity CloudDevops Project2 Web Server Up and Running!" > index.html        
+      ImageId: !Ref AutoscalingEC2ImageId 
+      KeyName: !Ref AutoscalingKeyName
       SecurityGroups:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
