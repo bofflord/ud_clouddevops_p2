@@ -68,7 +68,8 @@ Resources:
           cd /var/www/html  
           echo "it works! Udagram, Udacity" > index.html        
       ImageId: !Ref AutoscalingEC2ImageId 
-      KeyName: !Ref AutoscalingKeyName
+      # Removed KeyName
+      # KeyName: !Ref AutoscalingKeyName
       SecurityGroups:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
