@@ -75,7 +75,7 @@ Resources:
       InstanceType: t3.medium
       # reference to instance profile
       # IamInstanceProfile: 
-      #   Ref! ServerInstanceProfile
+      #   !Ref ServerInstanceProfile
       #IamInstanceProfile: server-ec2-instance-profile
       IamInstanceProfile:
         Fn::ImportValue:
