@@ -66,7 +66,7 @@ Resources:
           sudo apt-get install apache2 -y
           sudo systemctl start apache2.service
           cd /var/www/html  
-          echo "Udacity CloudDevops Project2 Web Server Up and Running!" > index.html        
+          echo "it works! Udagram, Udacity" > index.html        
       ImageId: !Ref AutoscalingEC2ImageId 
       KeyName: !Ref AutoscalingKeyName
       SecurityGroups:
